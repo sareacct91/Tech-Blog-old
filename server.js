@@ -20,10 +20,7 @@ app.set('views', path.join(__dirname, './views'));
 app.use(session({
   secret: process.env.SESS_SECRET,
   cookie: {
-    httpOnly: true,
-    sameSite: 'strict',
     maxAge: 60 * 60 * 24 * 1000,
-    secure: true,
   },
   saveUninitialized: false,
   resave: false,
