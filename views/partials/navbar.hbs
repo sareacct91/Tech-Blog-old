@@ -1,6 +1,13 @@
-<header>
-  <ul>
-
+<header class="bg-dark text-light px-8 py-5">
+  <ul class="flex gap-9">
+    <li><a href="/">Home</a></li>
+    <li><a href="/users/dashboard">Dashboard</a></li>
+    {{#unless loggedIn }}
+    <li><a href="/users/login">Login</a></li>
+    {{/unless}}
+    {{#if loggedIn }}
+    <li><a href="/users/logout">Logout</a></li>
+    {{/if}}
   </ul>
-  <h1>The Tech Blog</h1>
+  {{> h1 }}
 </header>
