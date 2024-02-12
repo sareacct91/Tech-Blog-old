@@ -8,6 +8,7 @@ const path = require('path');
 const routes = require('./routes');
 const errorHandler = require('./middlewares/error-handler');
 const morgan = require('morgan');
+const slog = require('./middlewares/slog');
 
 const app = express();
 const PORT = process.env.PORT;
@@ -28,6 +29,7 @@ app.use(session({
 }));
 
 app.use(morgan('tiny'));
+app.use(slog);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
