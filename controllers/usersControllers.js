@@ -1,5 +1,5 @@
 const { User } = require("../models");
-const { BadRequestError } = require("../utils/errors");
+const { BadRequestError, NotFoundError, UnauthorizedError } = require("../utils/errors");
 
 async function renderLogin(req, res) {
   res.render('login');
@@ -10,23 +10,19 @@ async function renderSignUp(req, res) {
 };
 
 async function renderDashboard(req, res) {
-  res.status(200).json({ msg: 'ok' });
+  res.render('dashboard', {loggedIn: req.session.loggedIn});
 };
-
-
-
 
 async function createUser(req, res) {
   const { name, password } = req.body;
 
-  if (!(name, password)) {
+  if (!(name && password)) {
     throw new BadRequestError('Missing username or password');
   }
 
   const resultData = await User.create({ name, password });
   const user = resultData.toJSON();
 
-  console.log(user);
 
   req.session.save(() => {
     req.session.user_id = user.id;
@@ -34,23 +30,44 @@ async function createUser(req, res) {
 
     console.log(req.session);
 
-    res.redirect('/');
+    res.redirect('/users/dashboard');
   });
 };
 
-async function login(req, res) {
+async function userLogin(req, res) {
+  const { name, password } = req.body;
 
+  console.log('\n', name, password, '\n');
+
+  if (!(name && password)) {
+    throw new BadRequestError('Missing username or password');
+  }
+
+  const user = await User.findOne({ where: { name } , raw: true});
+
+  if (!user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
+  req.session.save(() => {
+    req.session.user_id = user.id;
+    req.session.loggedIn = true;
+
+    res.redirect('/users/dashboard');
+  })
 };
 
-async function logout(req, res) {
-
+async function userLogout(req, res) {
+  req.session.destroy(() => {
+    res.redirect('/');
+  })
 };
 
 
 module.exports = {
   createUser,
-  logout,
-  login,
+  userLogout,
+  userLogin,
   renderLogin,
   renderSignUp,
   renderDashboard,
