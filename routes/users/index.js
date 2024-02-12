@@ -1,4 +1,5 @@
 const c = require('../../controllers/usersControllers');
+const userAuth = require('../../middlewares/auth');
 
 const router = require('express').Router();
 
@@ -8,12 +9,12 @@ router.route('/signup')
 
 router.route('/login')
   .get(c.renderLogin)
-  .post(c.login)
+  .post(c.userLogin)
 
 router.route('/logout')
-  .post(c.logout)
+  .get(c.userLogout)
 
 router.route('/dashboard')
-  .get(c.renderDashboard)
+  .get(userAuth, c.renderDashboard)
 
 module.exports = router;
