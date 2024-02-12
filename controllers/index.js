@@ -1,15 +1,14 @@
 const { Blog, User } = require('../models');
 
-async function homePage(req, res) {
-  const data = await Blog.findAll({ include: User });
-  console.log(data);
+async function renderHomePage(req, res) {
+  const blogs = await Blog.findAll({ include: User, raw: true });
+  console.log(blogs);
 
-  const loggedIn = req.session.loggedIn;
-  console.log(req.session);
+  const { loggedIn } = req.session;
 
   res.render('home', { loggedIn });
 };
 
 module.exports = {
-  homePage,
+  renderHomePage,
 }
